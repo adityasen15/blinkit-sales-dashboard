@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A portfolio retail analytics dashboard built with vanilla HTML, CSS and JavaScript using a disclosed synthetic dataset."
+    />
+    <meta name="theme-color" content="#f8cb0f" />
+    <title>Blinkit Sales Dashboard — Portfolio Project</title>
+    <link rel="stylesheet" href="assets/styles.css" />
+    <script src="assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#dashboard-content">Skip to dashboard</a>
+    <div class="app-shell">
+      <aside class="sidebar" id="filter-panel" aria-label="Dashboard filters">
+        <div class="brand-row">
+          <span class="brand-mark" aria-hidden="true">b</span>
+          <div>
+            <p class="brand-name"><span>blink</span>it</p>
+            <p class="brand-subtitle">Sales intelligence</p>
+          </div>
+          <button class="icon-button sidebar-close" id="close-filters" aria-label="Close filters">×</button>
+        </div>
+
+        <div class="sidebar-heading">
+          <span class="eyebrow eyebrow-dark">Control center</span>
+          <h2>Shape the view</h2>
+          <p>Every visual updates instantly with your selections.</p>
+        </div>
+
+        <form class="filters" id="filters-form">
+          <label>
+            <span>Date period</span>
+            <select id="date-filter">
+              <option value="all">All dates</option>
+              <option value="2025">Year 2025</option>
+              <option value="2024">Year 2024</option>
+              <option value="q4-2025">Q4 2025</option>
+              <option value="latest-90">Latest 90 days</option>
+            </select>
+          </label>
+          <label>
+            <span>Outlet location</span>
+            <select id="location-filter"><option value="all">All locations</option></select>
+          </label>
+          <label>
+            <span>Outlet type</span>
+            <select id="outlet-type-filter"><option value="all">All outlet types</option></select>
+          </label>
+          <label>
+            <span>Outlet size</span>
+            <select id="size-filter"><option value="all">All sizes</option></select>
+          </label>
+          <label>
+            <span>Item category</span>
+            <select id="category-filter"><option value="all">All categories</option></select>
+          </label>
+          <label>
+            <span>Customer type</span>
+            <select id="customer-filter"><option value="all">All customers</option></select>
+          </label>
+          <button class="reset-button" id="reset-filters" type="button">
+            <span aria-hidden="true">↺</span> Reset filters
+          </button>
+        </form>
+
+        <div class="data-note">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <strong>Portfolio dataset</strong>
+            <p>8,500 fully synthetic transactions. No company data is used.</p>
+          </div>
+        </div>
+      </aside>
+
+      <main id="dashboard-content" class="dashboard">
+        <header class="topbar">
+          <div class="topbar-title">
+            <button class="icon-button filter-toggle" id="open-filters" aria-label="Open filters">☰</button>
+            <div>
+              <p class="breadcrumb">Portfolio / Retail analytics</p>
+              <h1>Blinkit Sales Dashboard</h1>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <div class="last-updated">
+              <span>Dataset through</span>
+              <strong id="data-through">Loading…</strong>
+            </div>
+            <button class="export-button" id="export-data" type="button" disabled>
+              <span aria-hidden="true">↓</span> Export view
+            </button>
+          </div>
+        </header>
+
+        <section class="intro-strip" aria-labelledby="overview-title">
+          <div>
+            <span class="eyebrow">Executive overview</span>
+            <h2 id="overview-title">See what is selling—and where.</h2>
+            <p id="filter-summary">Preparing the complete sales picture…</p>
+          </div>
+          <div class="metric-switch" role="group" aria-label="Chart metric">
+            <button class="metric-option active" type="button" data-metric="sales">Sales</button>
+            <button class="metric-option" type="button" data-metric="units">Units</button>
+          </div>
+        </section>
+
+        <div class="loading-banner" id="loading-banner" role="status">
+          <span class="spinner" aria-hidden="true"></span>
+          Loading 8,500 synthetic transactions…
+        </div>
+        <div class="error-banner" id="error-banner" role="alert" hidden></div>
+
+        <section class="kpi-grid" aria-label="Key performance indicators">
+          <article class="kpi-card kpi-highlight">
+            <div class="kpi-icon" aria-hidden="true">₹</div>
+            <div>
+              <p>Total sales</p>
+              <strong id="kpi-sales">—</strong>
+              <span id="kpi-sales-context">Across selected orders</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-icon kpi-icon-green" aria-hidden="true">#</div>
+            <div>
+              <p>Orders</p>
+              <strong id="kpi-orders">—</strong>
+              <span>Unique transactions</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-icon kpi-icon-blue" aria-hidden="true">▦</div>
+            <div>
+              <p>Units sold</p>
+              <strong id="kpi-units">—</strong>
+              <span id="kpi-units-context">Items in basket</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-icon kpi-icon-purple" aria-hidden="true">↗</div>
+            <div>
+              <p>Avg. order value</p>
+              <strong id="kpi-aov">—</strong>
+              <span>Sales per order</span>
+            </div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-icon kpi-icon-orange" aria-hidden="true">★</div>
+            <div>
+              <p>Avg. rating</p>
+              <strong id="kpi-rating">—</strong>
+              <span>Out of 5.0</span>
+            </div>
+          </article>
+        </section>
+
+        <section class="visual-grid" aria-label="Sales visualizations">
+          <article class="panel trend-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker">Momentum</span>
+                <h3>Monthly performance</h3>
+              </div>
+              <div class="trend-insight" id="trend-insight">—</div>
+            </div>
+            <div class="chart-wrap chart-large">
+              <canvas id="trend-chart" role="img" aria-label="Monthly sales trend"></canvas>
+              <div class="chart-tooltip" id="trend-tooltip" hidden></div>
+            </div>
+          </article>
+
+          <article class="panel composition-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker">Product mix</span>
+                <h3>Fat content split</h3>
+              </div>
+            </div>
+            <div class="donut-layout">
+              <div class="donut-wrap">
+                <canvas id="fat-chart" role="img" aria-label="Sales split by fat content"></canvas>
+                <div class="donut-total">
+                  <span id="donut-total-label">Sales</span>
+                  <strong id="donut-total">—</strong>
+                </div>
+              </div>
+              <div class="legend" id="fat-legend"></div>
+            </div>
+          </article>
+
+          <article class="panel category-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker">Assortment</span>
+                <h3>Top item categories</h3>
+              </div>
+              <span class="panel-note">Top 8</span>
+            </div>
+            <div class="chart-wrap chart-bars">
+              <canvas id="category-chart" role="img" aria-label="Top item categories"></canvas>
+            </div>
+          </article>
+
+          <article class="panel tier-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker">Geography</span>
+                <h3>Outlet tier contribution</h3>
+              </div>
+            </div>
+            <div class="tier-list" id="tier-list"></div>
+          </article>
+
+          <article class="panel outlet-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-kicker">Format health</span>
+                <h3>Outlet type performance</h3>
+              </div>
+            </div>
+            <div class="outlet-table-wrap">
+              <table class="mini-table">
+                <thead>
+                  <tr>
+                    <th>Outlet type</th>
+                    <th>Sales</th>
+                    <th>Orders</th>
+                    <th>Rating</th>
+                  </tr>
+                </thead>
+                <tbody id="outlet-table-body"></tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel transactions-panel" aria-labelledby="transactions-title">
+          <div class="panel-heading transaction-heading">
+            <div>
+              <span class="panel-kicker">Detail explorer</span>
+              <h3 id="transactions-title">Transaction records</h3>
+            </div>
+            <label class="search-field">
+              <span class="sr-only">Search transactions</span>
+              <span aria-hidden="true">⌕</span>
+              <input id="table-search" type="search" placeholder="Search order, item or outlet…" />
+            </label>
+          </div>
+          <div class="table-scroll">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Order ID</th>
+                  <th>Item type</th>
+                  <th>Outlet</th>
+                  <th>Customer</th>
+                  <th class="align-right">Units</th>
+                  <th class="align-right">Sales</th>
+                  <th class="align-right">Rating</th>
+                </tr>
+              </thead>
+              <tbody id="transactions-body"></tbody>
+            </table>
+          </div>
+          <div class="pagination-row">
+            <p id="table-count">—</p>
+            <div class="pagination-controls">
+              <button id="prev-page" type="button" aria-label="Previous page">←</button>
+              <span id="page-label">Page 1</span>
+              <button id="next-page" type="button" aria-label="Next page">→</button>
+            </div>
+          </div>
+        </section>
+
+        <footer>
+          <p>Independent portfolio project • Built with vanilla HTML, CSS &amp; JavaScript</p>
+          <p>Blinkit is a trademark of its respective owner. This project is not affiliated with or endorsed by Blinkit.</p>
+        </footer>
+      </main>
+    </div>
+    <div class="sidebar-overlay" id="sidebar-overlay" hidden></div>
+  </body>
+</html>

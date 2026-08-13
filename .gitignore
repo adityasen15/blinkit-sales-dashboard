@@ -1,0 +1,16 @@
+# OS and editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python cache / virtual environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local reports and temporary exports
+*.log
+blinkit_filtered_view.csv
+*.inspect.ndjson

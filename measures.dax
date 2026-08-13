@@ -1,0 +1,53 @@
+-- Suggested Power BI table name: Sales
+
+Total Sales =
+SUM ( Sales[sales] )
+
+Total Orders =
+DISTINCTCOUNT ( Sales[order_id] )
+
+Total Units =
+SUM ( Sales[units_sold] )
+
+Average Order Value =
+DIVIDE ( [Total Sales], [Total Orders], 0 )
+
+Average Rating =
+AVERAGE ( Sales[rating] )
+
+Average Selling Price =
+DIVIDE ( [Total Sales], [Total Units], 0 )
+
+Member Sales =
+CALCULATE ( [Total Sales], Sales[customer_type] = "Member" )
+
+Member Sales Share =
+DIVIDE ( [Member Sales], [Total Sales], 0 )
+
+Low Fat Sales =
+CALCULATE ( [Total Sales], Sales[item_fat_content] = "Low Fat" )
+
+Low Fat Sales Share =
+DIVIDE ( [Low Fat Sales], [Total Sales], 0 )
+
+Previous Month Sales =
+CALCULATE ( [Total Sales], DATEADD ( 'Date'[Date], -1, MONTH ) )
+
+Month-over-Month Sales Change =
+[Total Sales] - [Previous Month Sales]
+
+Month-over-Month Sales Change % =
+DIVIDE ( [Month-over-Month Sales Change], [Previous Month Sales], 0 )
+
+Sales Rank by Item Type =
+RANKX ( ALLSELECTED ( Sales[item_type] ), [Total Sales], , DESC, DENSE )
+
+Sales Rank by Outlet Type =
+RANKX ( ALLSELECTED ( Sales[outlet_type] ), [Total Sales], , DESC, DENSE )
+
+Selected Date Range =
+VAR MinDate = MIN ( Sales[order_date] )
+VAR MaxDate = MAX ( Sales[order_date] )
+RETURN
+    FORMAT ( MinDate, "dd MMM yyyy" ) & " – " & FORMAT ( MaxDate, "dd MMM yyyy" )
+
